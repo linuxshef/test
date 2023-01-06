@@ -1,0 +1,13 @@
+#!/bin/bash
+fileName="test.txt"
+modules="\"Nya Kawai\""
+
+CFLAGSline=`grep -hnr "\"" $fileName | grep CFLAGS | cut -d ":" -f1 |head -n1`
+for (( i=$CFLAGSline+1;i<`wc -l $fileName|cut -d " " -f1`;i++ )) {
+  output=`sed -n "$i p" $fileName`
+  if [[ `echo $output | grep "\""` ]];then
+   break
+  fi
+}
+sed -i "s/CFLAGS=.*/CFLAGS=$modules/" $fileName
+sed -i "$(($CFLAGSline+1)),$i d" $fileName
