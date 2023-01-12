@@ -1,13 +1,10 @@
 #!/bin/bash
-fileName="test.txt"
-modules="\"Nya Kawai\""
-
-CFLAGSline=`grep -hnr "\"" $fileName | grep CFLAGS | cut -d ":" -f1 |head -n1`
-for (( i=$CFLAGSline+1;i<`wc -l $fileName|cut -d " " -f1`;i++ )) {
-  output=`sed -n "$i p" $fileName`
-  if [[ `echo $output | grep "\""` ]];then
-   break
-  fi
-}
-sed -i "s/CFLAGS=.*/CFLAGS=$modules/" $fileName
-sed -i "$(($CFLAGSline+1)),$i d" $fileName
+sudo systemctl enable systemd-resolved
+sudo systemctl start systemd-resolved
+sudo systemctl restart NetworkManager 
+sudo systemctl restart dhcpcd
+sudo dhcpcd 
+sudo echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+sudo echo 'nameserver 8.8.4.4' >> /etc/resolv.conf
+sudo pacman-mirrors --fasttrack 
+sudo pacman -Syy
