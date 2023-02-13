@@ -1,0 +1,31 @@
+#!/bin/bash
+
+sed -i s/'CXXFLAGS="$CFLAGS -Wp,-D_GLIBCXX_ASSERTIONS"'/'CXXFLAGS="-march=native -mtune=native -O2 -pipe -fno-plt"'/g /etc/makepkg.conf
+sed -i s/'#RUSTFLAGS="-C opt-level=2"'/'RUSTFLAGS="-C opt-level=2 -C target-cpu=native"'/g /etc/makepkg.conf
+sed -i s/'MAKEFLAGS="-j2"'/'MAKEFLAGS="-j$(($(nproc)+1))"'/g /etc/makepkg.conf
+fileName="/etc/makepkg.conf"
+flags="\"-march=native -mtune=native -O2 -pipe -fno-plt\""
+
+CFLAGSline=`grep -hnr "\"" $fileName | grep CFLAGS | cut -d ":" -f1 |head -n1`
+for (( i=$CFLAGSline+1;i<`wc -l $fileName|cut -d " " -f1`;i++ )) {
+  output=`sed -n "$i p" $fileName`
+  if [[ `echo $output | grep "\""` ]];then
+   break
+  fi
+}
+sed -i "s/CFLAGS=.*/CFLAGS=$flags/" $fileName
+sed -i "$(($CFLAGSline+1)),$i d" $fileName
+#-------------------------------------------------------------
+mkdir -p /home/manjaro/tools
+mkdir -p /mnt/home/nitro/tools
+cd /home/manjaro/tools
+packages=(ananicy-git zramswap stacer-bin hardinfo)
+for package in "${packages[@]}"; do
+  git clone https://aur.archlinux.org/$package.git
+  chown manjaro /home/manjaro/tools/$package
+  chown manjaro /mnt/home/nitro/tools
+  cd $package
+  su manjaro -c 'export PKGDEST=/mnt/home/nitro/tools ; makepkg -s --noconfirm'
+  cd ..
+done
+
