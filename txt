@@ -1,0 +1,16 @@
+#!/bin/bash
+
+
+
+packages=(ananicy-git zramswap stacer-bin hardinfo)
+for package in "${packages[@]}"; do
+  git clone https://aur.archlinux.org/$package.git
+  cd $package
+  arch-chroot /mnt /bin/bash -c "makepkg -si --noconfirm"
+  cd ..
+done
+
+
+
+
+arch-chroot /mnt /bin/bash -c "su $user -c makepkg -si --noconfirm"
