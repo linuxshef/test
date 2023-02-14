@@ -28,4 +28,6 @@ for package in "${packages[@]}"; do
   su manjaro -c 'export PKGDEST=/mnt/home/nitro/tools ; makepkg -s --noconfirm'
   cd ..
 done
-
+# arch-chroot /mnt /bin/bash -c 'chown $user home/$user/tools'
+arch-chroot /mnt /bin/bash -c 'pacman -U home/$user/tools/*.tar.zst'
+arch-chroot /mnt /bin/bash -c 'rm -Rf home/$user/tools'
