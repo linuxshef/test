@@ -23,15 +23,11 @@ user=nitro
 mkdir -p /home/manjaro/tools
 mkdir -p /mnt/home/$user/tools
 cd /home/manjaro/tools
-packages=(ananicy-git zramswap stacer-bin hardinfo)
+packages=(startwine)
 for package in "${packages[@]}"; do
-  git clone https://aur.archlinux.org/$package.git
+  git clone https://gitlab.com/hybrid-project-developers/pkgbuilds/hybrid-extra-pkgbuilds/$package.git
   chown manjaro /home/manjaro/tools/$package
-  chown manjaro /mnt/home/$user/tools
   cd $package
-  su manjaro -c "export PKGDEST=/mnt/home/$user/tools ; makepkg -s --noconfirm"
+  su manjaro -c "export PKGDEST=/mnt/home/$username/tools ; makepkg -s --noconfirm"
   cd ..
 done
-# arch-chroot /mnt /bin/bash -c "chown $user home/$user/tools"
-arch-chroot /mnt /bin/bash -c "pacman -U home/$user/tools/*.tar.zst --noconfirm"
-arch-chroot /mnt /bin/bash -c "rm -Rf home/$user/tools"
