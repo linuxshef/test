@@ -1,7 +1,58 @@
 #!/bin/bash
-sed -i s/'#[custom]'/'[chaotic-aur]'/g /etc/pacman.conf
-sed -i s/'#SigLevel = Optional TrustALL'/'Include = /etc/pacman.d/chaotic-mirrorlist'/g /etc/pacman.conf
+#sed -i s/'#[custom]'/'[chaotic-aur]'/g /etc/pacman.conf
+#sed -i s/'#SigLevel = Optional TrustALL'/'Include = /etc/pacman.d/chaotic-mirrorlist'/g /etc/pacman.conf
 #
-pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com --noconfirm
-pacman-key --lsign-key FBA220DFC880C036 --noconfirm
-pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm
+#pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com --noconfirm
+#pacman-key --lsign-key FBA220DFC880C036 --noconfirm
+#pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm
+#----------------------------------------------
+
+echo '
+                                 Монтирование разделов
+                            и  домашнего ( home ) раздела
+                 .───────────────────────────────────────────────────────.
+                 .                                                       .
+                 .                                                       .
+                 .       Выберите один из вариантов монтирования         .
+                 .                                                       .
+                 .                                                       .
+                 .───────────────────────────────────────────────────────.
+'
+echo -e "\t
+                    -> Продолжить в Btrfs без home введите    1    "
+echo -e "\t
+                    -> Продолжить в Ext4 без home введите      2    "
+echo -e "\t
+                    -> Смонтировать Home введите     3    "
+
+echo -n "
+                      -> Введите значение : "
+
+read main_menu
+      case "$main_menu" in
+        "1") clear ;
+mount  /dev/$root /mnt
+
+btrfs su cr /mnt/@
+
+btrfs su cr /mnt/@home
+
+btrfs su cr /mnt/@var
+
+btrfs su cr /mnt/@var_log
+
+btrfs su cr /mnt/@snapshots
+
+umount /mnt
+
+mount -o rw,noatime,compress=zstd:2,space_cache=v2,discard=async,subvol=@ /dev/$root /mnt
+
+mkdir /mnt/{boot,home,var,var_log,.snapshots}
+
+mount -o rw,noatime,compress=zstd:2,space_cache=v2,discard=async,subvol=@home  /dev/$root  /mnt/home
+
+mount -o rw,noatime,compress=zstd:2,space_cache=v2,discard=async,subvol=@var  /dev/$root  /mnt/var
+
+mount -o rw,noatime,compress=zstd:2,space_cache=v2,discard=async,subvol=@var_log /dev/$root /mnt/var_log
+
+mount -o rw,noatime,compress=zstd:2,space_cache=v2,discard=async,subvol=@snapshots  /dev/$root  /mnt/.snapshots
