@@ -7,6 +7,24 @@
 #pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm
 #----------------------------------------------
 
+
+
+
+clear
+
+
+read -p "
+                                 -> Boot: " boot
+read -p "
+                                 -> Root: " root
+read -p "
+                                 -> Swap: " swap
+read -p "
+                                 -> Home: " home
+
+
+clear
+
 echo '
                                  Монтирование разделов
                             и  домашнего ( home ) раздела
